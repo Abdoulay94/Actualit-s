@@ -4,26 +4,37 @@ $username = "root";
 $password = "";
 
 try {
-	$conn = new PDO("mysql:host=$servername;dbname=mglsi_news", $username, $password);
-  // set the PDO error mode to exception
-	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+
+	$pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+	$pdo_options[PDO::ATTR_EMULATE_PREPARES] = false;
+	$pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_OBJ;
+	$conn = new PDO("mysql:host=$servername;dbname=mglsi_news", $username, $password,$pdo_options);
+	$resultCath = $conn->prepare("SELECT * FROM categorie ");
+
+	$resultCath->execute();
+	$resultCath = $resultCath->fetchAll(); 
 	
 
-	$result = $conn->prepare("SELECT * FROM article,categorie WHERE article.categorie=categorie.id");
+
+	$result = $conn->prepare("SELECT * FROM article,categorie WHERE article.categorie=categorie.id ORDER BY article.id Desc LIMIT 6");
 
 	$result->execute();
 
 	$result = $result->fetchAll(); 
 
-
-
-
-	//$result = $result->fetchAll(); 
-
-	//var_dump($result);
 } catch(PDOException $e) {
 	echo "Connection failed: " . $e->getMessage();
 }
+
+
+function  return_text($text){
+	if(  strlen($text)>90 ) return substr($text, 0,90);
+	return $text;
+}
+
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -59,10 +70,14 @@ try {
 
 	<ul class="menu">
 		<li><a href="#" class="active">Accueil</a></li>
-		<li><a href="#">Sport</a></li>
-		<li><a href="#">Santé</a></li>
-		<li><a href="#">Education</a></li>
-		<li><a href="#">Politique</a></li>
+		<?php for($i=1; $i <=sizeof($resultCath); $i++) { 	
+			 echo "<li><a href=\"showOneCat.php?article_id=".$resultCath[$i-1]->id."\">".  $resultCath[$i-1]->libelle ."</a></li>";
+		
+
+
+	
+	
+	} ?>
 		<li class="slider"></li>
 	</ul>
 
@@ -82,37 +97,39 @@ try {
 			<div class="row">
 				<?php for($i=1; $i <=sizeof($result); $i++) { 
 
-					 if($i%4==0){ echo "</div></div></div><div class='container pt-5'><div class='container pt-5'><div class='row'> "; }?> 
-
-				
-				
-                <div class="col-lg-4 col-md-6 mb-5">
-                	<div class="position-relative mb-4">
-                		<img class="img-fluid rounded w-100" src="img/blog-3.jpg" alt="">
-                		<div class="blog-date">
-                			<h4 class="font-weight-bold mb-n1">01</h4>
-                			<small class="text-white text-uppercase">Jan</small>
-                		</div>
-                	</div>
-               
-                    <h5 class="font-weight-medium mb-2"><?php $result[$i]->titre ?></h5>
-                    <p class="mb-4">Dolor justo sea kasd lorem clita justo no diam amet. Kasd magna dolor amet</p>
-
-                </div>
-
-
-               
-
-<?php }?>
-
-
-                </div></div></div>
+					if($i%4==0){ echo "</div></div></div><div class='container pt-5'><div class='container pt-5'><div class='row'> "; }?> 
 
 
 
-       
+					<div class="col-lg-4 col-md-6 mb-5">
+						<div class="position-relative mb-4">
+							<img class="img-fluid rounded w-100" src="img/blog-3.jpg" alt="">
+							<div class="blog-date">
+								<h4 class="font-weight-bold mb-n1">01</h4>
+								<small class="text-white text-uppercase">Jan</small>
+							</div>
+						</div>
 
-    <!-- Blog End -->
+						<h5 class="font-weight-medium "><?php echo $result[$i-1]->titre; ?></h5>
+						<p class="container"><?php echo  return_text( $result[$i-1]->contenu) ?> 
+						<?php if( strlen($result[$i-1]->contenu)!=strlen(return_text( $result[$i-1]->contenu)))
+						echo "....<a style='color: black;' href='#'>lire plus</a></p>"; ?>
 
-</body>
-</html>
+					</div>
+
+
+
+
+				<?php }?>
+
+
+			</div></div></div>
+
+
+
+
+
+			<!-- Blog End -->
+
+		</body>
+		</html>
