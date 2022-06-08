@@ -65,7 +65,7 @@ function  return_text($text){
 </head>
 <body>
 
-	<h1>Actualité bla bla bla
+	<h1>Actu
 	</h1>
 
 	<ul class="menu">
@@ -103,10 +103,10 @@ function  return_text($text){
 
 					<div class="col-lg-4 col-md-6 mb-5">
 						<div class="position-relative mb-4">
-							<img class="img-fluid rounded w-100" src="img/blog-3.jpg" alt="">
+						<!-- <img class="img-fluid rounded w-100" src="img/blog-3.jpg" alt="">-->
 							<div class="blog-date">
-								<h4 class="font-weight-bold mb-n1">01</h4>
-								<small class="text-white text-uppercase">Jan</small>
+								<h4 class="font-weight-bold mb-n1">22</h4>
+								<small class="text-white text-uppercase">Jui</small>
 							</div>
 						</div>
 
